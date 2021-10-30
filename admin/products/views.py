@@ -1,7 +1,10 @@
+import random
+
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .models import Product
+from .models import Product, User
 from .serializers import ProductSerializers
 
 
@@ -46,3 +49,19 @@ class ProductViewSet(viewsets.ViewSet):
         else:
             product.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+class UserAPIView(APIView):
+
+    def get(self, _):
+        try:
+            users = User.objects.all()
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            if len(users):
+                user = random.choice(users)
+                return Response({
+                    'id': user.id
+                })
+            else:
+                return Response(status=status.HTTP_404_NOT_FOUND)
