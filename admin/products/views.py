@@ -21,20 +21,28 @@ class ProductViewSet(viewsets.ViewSet):
         try:
             product = Product.objects.get(id=pk)
         except:
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_404_NOT_FOUND)
         else:
             print(product)
             serializer = ProductSerializers(product)
             return Response(serializer.data)
 
     def update(self, request, pk=None):
-        product = Product.objects.get(id=pk)
-        serializer = ProductSerializers(instance=product, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        try:
+            product = Product.objects.get(id=pk)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            serializer = ProductSerializers(instance=product, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
     def destroy(self, request, pk=None):
-        product = Product.objects.get(id=pk)
-        product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            product = Product.objects.get(id=pk)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            product.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
